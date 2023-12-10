@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import multer, { MemoryStorage, FileFilterCallback } from "multer";
+import multer, { StorageEngine, FileFilterCallback } from "multer";
 import { s3Uploadv3 } from "./s3Service";
 import { v4 as uuid } from "uuid";
 
@@ -8,13 +8,13 @@ require( "dotenv" ).config();
 const app = express();
 const port = 4000;
 
-const storage: MemoryStorage = multer.memoryStorage();
+const storage: StorageEngine = multer.memoryStorage();
 
 const fileFilter = ( req: Request, file: Express.Multer.File, cb: FileFilterCallback ) => {
   if ( file.mimetype.split( "/" )[ 0 ] === "image" ) {
     cb( null, true );
   } else {
-    cb( new multer.MulterError( "LIMIT_UNEXPECTED_FILE" ), false );
+    cb( null, false ); // Pass null as the first parameter and false as the second parameter
   }
 };
 
